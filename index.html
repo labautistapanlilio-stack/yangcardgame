@@ -39,7 +39,7 @@ position:absolute;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(
 .hd.b{left:0;right:0;bottom:0}.hd.t{left:0;right:0;top:0;transform:rotate(180deg)}
 .hd.l{left:0;top:0;width:var(--H);transform-origin:0 0;transform:translateX(var(--hh)) rotate(90deg)}
 .hd.r{left:0;top:0;width:var(--H);transform-origin:0 0;transform:translate(calc(var(--W) - var(--hh)),var(--H)) rotate(-90deg)}
-.hd.turn{background:linear-gradient(#0000,#ffffff14)}
+.hd.{background:linear-gradient(#0000,#ffffff14)}
 .row{display:flex;gap:8px;justify-content:center;align-items:center;height:34px}
 .nm{padding:6px 9px;border-radius:9px;color:#1d1b26;font-size:.9em;box-shadow:inset 0 -3px 0 #0004}.hd.turn .nm{animation:pulse .9s infinite}
 .cards{display:flex;justify-content:safe center;align-items:flex-end;overflow-x:auto;overflow-y:hidden;padding:14px 10px 8px;height:calc(var(--cwm)*1.56 + 22px);scrollbar-width:none}
@@ -621,7 +621,7 @@ const PID=c=>'yangcard-'+c;
 const TURN_URL='';
 /* OR, for services that give a server, username and password (such as ExpressTURN), fill these in.
    TURN_SERVER looks like  turn:SERVERNAME:3478   */
-const TURN_SERVER='',TURN_USER='',TURN_PASS='';
+const TURN_SERVER='turn:free.expressturn.com:3478',TURN_USER='000000002111070122',TURN_PASS='PBckblnV7Oiv6x3DYnO2ve8wU/o=';
 async function peerOpts(){const o={debug:0};if(TURN_SERVER){o.config={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:TURN_SERVER,username:TURN_USER,credential:TURN_PASS}]};return o}if(!TURN_URL)return o;try{const c=new AbortController(),t=setTimeout(()=>c.abort(),6000),r=await fetch(TURN_URL,{signal:c.signal});clearTimeout(t);const list=r.ok?await r.json():null;
 if(Array.isArray(list)&&list.length)o.config={iceServers:[{urls:'stun:stun.l.google.com:19302'},...list]};else console.warn('Relay link rejected')}catch(e){console.warn('Relay link failed',e)}return o}
 async function hostRoomA(onconn,onerr){await loadPeerJS();const opts=await peerOpts();for(let tries=0;tries<6;tries++){const code=rcode();try{await new Promise((ok,no)=>{const p=new Peer(PID(code),opts);const t=setTimeout(()=>{try{p.destroy()}catch(e){}no(new Error('timeout'))},9000);
