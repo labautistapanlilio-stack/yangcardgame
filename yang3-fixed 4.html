@@ -619,7 +619,10 @@ const PID=c=>'yangcard-'+c;
 /* Relay (TURN) for players on different networks. Paste your Metered credentials link between the quotes:
    https://YOURAPP.metered.live/api/v1/turn/credentials?apiKey=YOUR_API_KEY   */
 const TURN_URL='';
-async function peerOpts(){const o={debug:0};if(!TURN_URL)return o;try{const c=new AbortController(),t=setTimeout(()=>c.abort(),6000),r=await fetch(TURN_URL,{signal:c.signal});clearTimeout(t);const list=r.ok?await r.json():null;
+/* OR, for services that give a server, username and password (such as ExpressTURN), fill these in.
+   TURN_SERVER looks like  turn:SERVERNAME:3478   */
+const TURN_SERVER='',TURN_USER='',TURN_PASS='';
+async function peerOpts(){const o={debug:0};if(TURN_SERVER){o.config={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:TURN_SERVER,username:TURN_USER,credential:TURN_PASS}]};return o}if(!TURN_URL)return o;try{const c=new AbortController(),t=setTimeout(()=>c.abort(),6000),r=await fetch(TURN_URL,{signal:c.signal});clearTimeout(t);const list=r.ok?await r.json():null;
 if(Array.isArray(list)&&list.length)o.config={iceServers:[{urls:'stun:stun.l.google.com:19302'},...list]};else console.warn('Relay link rejected')}catch(e){console.warn('Relay link failed',e)}return o}
 async function hostRoomA(onconn,onerr){await loadPeerJS();const opts=await peerOpts();for(let tries=0;tries<6;tries++){const code=rcode();try{await new Promise((ok,no)=>{const p=new Peer(PID(code),opts);const t=setTimeout(()=>{try{p.destroy()}catch(e){}no(new Error('timeout'))},9000);
 p.on('open',()=>{clearTimeout(t);NET.peer=p;ok()});p.on('error',e=>{clearTimeout(t);no(e)});p.on('connection',c=>onconn(mkLink(c,'pj')));p.on('disconnected',()=>{try{p.reconnect()}catch(e){}})});return code}catch(e){if(e&&e.type==='unavailable-id')continue;throw e}}throw new Error('busy')}
