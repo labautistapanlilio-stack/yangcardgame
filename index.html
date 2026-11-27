@@ -1041,7 +1041,7 @@ f.innerHTML='<i class="moon"></i>'+[0,1,2,3].map(i=>`<i class="ss" style="top:${
 function nightSync(){const n=document.body.classList.contains('night');document.querySelectorAll('#nmb i,#nmh i').forEach(i=>i.className='ic '+(n?'su':'mo'));
 document.querySelectorAll('#nmb,#nmh').forEach(b=>{b.title=n?'Day mode':'Night mode';b.setAttribute('aria-label',b.title)});const m=document.querySelector('meta[name=theme-color]');if(m)m.content=n?'#0a1233':'#3ea6f2'}
 function setNight(n){document.body.classList.toggle('night',n);try{localStorage.setItem('yang_night',n?'1':'0')}catch(e){}nightSync()}
-nightFx();try{if(localStorage.getItem('yang_night')==='1')document.body.classList.add('night')}catch(e){}nightSync();
+nightFx();nightSync();/* every visit starts in day mode */
 document.addEventListener('click',e=>{if(e.target.closest('#nmb,#nmh')){sfx('click');setNight(!document.body.classList.contains('night'))}});
 
 
